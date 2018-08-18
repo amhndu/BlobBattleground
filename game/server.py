@@ -1,11 +1,10 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO, join_room, emit
+from game import app, socketio
+from flask import render_template
+from flask_socketio import SocketIO, emit, join_room, close_room
 import random
 import string
 
 # initialize Flask
-app = Flask(__name__)
-socketio = SocketIO(app)
 ROOMS = {} # dict to track active rooms
 
 @app.route('/')
@@ -33,5 +32,3 @@ def on_create(data):
     for rm in ROOMS.values():
         print(rm.room_id, rm.name)
 
-if __name__ == '__main__':
-    socketio.run(app, debug=True)
