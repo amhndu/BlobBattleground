@@ -12,9 +12,9 @@ def create_room():
     gm = GameRoom()
     room = gm.room_id
     rooms[room] = gm
-    url = "/game/" + room
+    url = "/game#" + room
     return redirect(url, code=302)
 
-@app.route('/game/<room_id>')
-def join_game(room_id):
+@app.route('/game')
+def join_game():
     return render_template('waitingroom.html')
