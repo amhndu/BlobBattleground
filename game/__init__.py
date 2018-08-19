@@ -4,4 +4,5 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-import game.server
+import game.views
+import game.listeners
