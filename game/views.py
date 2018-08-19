@@ -5,3 +5,5 @@ from flask import render_template
 def index():
     """Serve the index HTML"""
     return render_template('index.html')
+
+
