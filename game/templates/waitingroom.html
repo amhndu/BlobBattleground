@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BlobBattleground</title>
+</head>
+<body>
+  <h1>Waiting area</h1>
+  <div class="player-list-area">
+    <h2>Players joined</h2>
+    <ul class="player-list">
+    </ul>
+  </div> 
+  {% if owner %}
+  <input name="start_game" type="button">
+  {% endif %}
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/client.js') }}"></script>
+</body>
+</html>
