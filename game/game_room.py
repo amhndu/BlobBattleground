@@ -19,6 +19,6 @@ class GameRoom:
         room_id = ''.join(random.SystemRandom().choice(
             string.ascii_uppercase) for _ in range(5))
         if room_id in rooms:
-            self.generate_room_id();
+            self.generate_room_id()
         else:
             return room_id
