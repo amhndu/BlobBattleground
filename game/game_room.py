@@ -13,3 +13,7 @@ class GameRoom:
 
     def set_owner(self, owner):
         self.owner = owner
+
+    def update_player_name(self, player_id, name):
+    	self.players[player_id].username = name
+

@@ -3,3 +3,6 @@ const websocket = io('http://' + document.domain + ':' + location.port);
 websocket.on('connect', function() {
 	console.log('Websocket connected!');
 });
+
+var username = prompt("Username");
+websocket.emit('set-username', username);
