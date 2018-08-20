@@ -5,11 +5,13 @@
   <title>Welcome to BlobBattleground!</title>
 </head>
 <body>
-  <p>Welcome to BlobBattleground!</p>
-  <button onclick="createGame()">Create Game</button>
-  <input type="text" id="room_id">
-  <button onclick="joinGame()">Join Game</button>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/client.js') }}"></script>
+  <div id="app">
+  	<p>Welcome to BlobBattleground!</p>
+  	<button onclick="createGame()">Create Game</button>
+  	<input type="text" id="room_id">
+  	<button onclick="joinGame()">Join Game</button>
+  	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+  	<script type="text/javascript" src="{{ url_for('static', filename='js/client.js') }}"></script>
+  </div>
 </body>
 </html>

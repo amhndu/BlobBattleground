@@ -27,6 +27,3 @@ class GameRoom:
             self.generate_room_id()
         else:
             return room_id
-
-    def update_player_name(self, player_id, name):
-    	self.players[player_id].username = name

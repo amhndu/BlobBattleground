@@ -16,9 +16,8 @@ def create(name):
 
     sid_map[request.sid] = (room.id, player.id)
 
-    print('game-created')
+    print('DBG game-created', room.id, player.name)
     emit('game-created', (room.id, player.id))
-
 
 
 @socketio.on('join-game')
@@ -30,4 +29,18 @@ def join(room_id, name):
 
     sid_map[request.sid] = (room.id, player.id)
 
+    print('DBG game-joined', room.id, player.id, player.name)
     emit('game-joined', (player.id, json.dumps(room.players, default=lambda o: o.__dict__)))
+
+@socketio.on('start-game')
+def start():
+    room_id, player_id = sid_map[request.sid]
+    room = rooms[room_id]
+    player = room.players[player_id]
+    if player == room.owner:
+        print('starting game')
+        emit('game-started', room=room_id)
+    else:
+        print('attempt to create game by non-owner')
+
+
