@@ -15,7 +15,7 @@ class GameRoom:
         if len(self.players) == 0:
             p = self.owner = Player(0, *args)
         else:
-            p = Player(self.players[-1].id, *args)
+            p = Player(len(self.players), *args)
         self.players.append(p)
         return p
 

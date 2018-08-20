@@ -23,15 +23,16 @@ socket.on('game-joined', function(player_id, players) {
 	console.log(players);
 	fetchlobby(false);
 	//document.getElementById("room-id-display").innerHTML = window.room_id;
-	players = JSON.parse(players);
+	var players = JSON.parse(players);
 	setTimeout(function(){
 		document.getElementById("room-id-display").innerHTML = window.room_id;
-		let node = document.createElement("LI");                 
+		let node = document.createElement("LI");
+		console.log(players);                 
 		for(let i = 0; i<players.length; i++){
 			let node = document.createElement("LI");                 
 			let textnode = document.createTextNode(players[i]['id']+" "+players[i]['name']);       
 			node.appendChild(textnode);                              
-			dcocument.getElementById("player-list").appendChild(node);	
+			document.getElementById("player-list").appendChild(node);	
 		}
 	}, 1000);
 });

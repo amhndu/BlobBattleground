@@ -23,7 +23,7 @@ def create(name):
 @socketio.on('join-game')
 def join(room_id, name):
     room = rooms[room_id]
-    join_room(room.room_id)
+    join_room(room.id)
 
     player = room.new_player(name)
 
