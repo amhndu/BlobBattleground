@@ -1,30 +1,33 @@
-from flask_socketio import SocketIO, emit, join_room, close_room
-from game import socketio
-from game.game_room import GameRoom
-from game.player import Player
+from flask_socketio import emit, join_room
 from flask import request
+from game import socketio
+from game.game_room import rooms, GameRoom
+import json
 
-rooms = {} # dict to track active rooms
-player = [] # dict to track players
+sid_map = {}
 
-@socketio.on('create')
-def on_create():
-    """Create a game lobby"""
-    gm = GameRoom()
-    room = gm.room_id
-    rooms[room] = gm
-    join_room(room)
-    emit('join_room', {'room': room})
-    
-    # Print all room ids and names till now
-    for rm in rooms.values():
-        print(rm.room_id)
+@socketio.on('create-game')
+def create(name):
+    room = GameRoom()
+    rooms[room.id] = room
+    join_room(room.id)
 
-@socketio.on('set-username')
-def on_set_username(name):
-	"""User wants to set his name"""
-	rooms[sid_map[request.sid][0]].update_player_name(sid_map[request.sid][1], name)
+    player = room.new_player(name)
+
+    sid_map[request.sid] = (room.id, player.id)
+
+    print('game-created')
+    emit('game-created', (room.id, player.id))
 
 
 
+@socketio.on('join-game')
+def join(room_id, name):
+    room = rooms[room_id]
+    join_room(room.room_id)
 
+    player = room.new_player(name)
+
+    sid_map[request.sid] = (room.id, player.id)
+
+    emit('game-joined', (player.id, json.dumps(room.players, default=lambda o: o.__dict__)))

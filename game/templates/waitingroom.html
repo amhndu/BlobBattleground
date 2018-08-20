@@ -11,9 +11,9 @@
     <ul class="player-list">
     </ul>
   </div> 
-  {% if owner %}
-  <input name="start_game" type="button">
-  {% endif %}
+  <div class='owner'>
+    <input name="start_game" type="button">
+  </div>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/client.js') }}"></script>
 </body>

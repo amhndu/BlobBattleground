@@ -1,4 +1,4 @@
-from game import app
+import app
 from flask import render_template, redirect
 from game.game_room import GameRoom, rooms
 
@@ -9,13 +9,11 @@ def index():
 
 @app.route('/create')
 def create_room():
-    gm = GameRoom()
-    room = gm.room_id
-    rooms[room] = gm
-    url = "/game/" + room
+    room = GameRoom()
+    rooms[room.id] = room
+    url = "/game#" + room.id
     return redirect(url, code=302)
 
-@app.route('/game/')
-def join_game(room_id):
+@app.route('/game')
+def join_game():
     return render_template('waitingroom.html')
-

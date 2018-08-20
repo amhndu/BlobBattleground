@@ -1,3 +1,4 @@
+from game.player import Player
 import random
 import string
 
@@ -5,15 +6,19 @@ rooms = {} # dict to track active rooms
 
 class GameRoom:
     def __init__(self):
-        self.room_id = self.generate_room_id()
+        self.id = self.generate_room_id()
         self.players = []
         self.owner = None
 
-    def add_player(self, player):
-        self.players.append(player)
+    def new_player(self, *args):
+        p = None
+        if len(self.players) == 0:
+            p = self.owner = Player(0, *args)
+        else:
+            p = Player(self.players[-1].id, *args)
+        self.players.append(p)
+        return p
 
-    def set_owner(self, owner):
-        self.owner = owner
 
     def generate_room_id(self):
         room_id = ''.join(random.SystemRandom().choice(
