@@ -9,10 +9,9 @@ def index():
 
 @app.route('/create')
 def create_room():
-    gm = GameRoom()
-    room = gm.room_id
-    rooms[room] = gm
-    url = "/game#" + room
+    room = GameRoom()
+    rooms[room.id] = room
+    url = "/game#" + room.id
     return redirect(url, code=302)
 
 @app.route('/game')

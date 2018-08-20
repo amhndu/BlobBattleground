@@ -6,6 +6,7 @@ websocket.on('connect', function() {
 });
 
 websocket.on('joined-room', function(id, players) {
+    if (id == 0)
     console.log(id);
     console.log(players);
 });
