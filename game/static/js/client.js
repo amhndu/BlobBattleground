@@ -15,26 +15,31 @@ socket.on('game-created', function(room_id, player_id) {
 		let textnode = document.createTextNode(player_id+" "+username);       
 		node.appendChild(textnode);                              
 		document.getElementById("player-list").appendChild(node);
-	}, 1000);
+	}, 100);
 });
 
-socket.on('game-joined', function(player_id, players) {
-	console.log(player_id);
-	console.log(players);
+socket.on('game-joined', function(player_id){
+	window.player_id = player_id;
 	fetchlobby(false);
-	//document.getElementById("room-id-display").innerHTML = window.room_id;
-	var players = JSON.parse(players);
 	setTimeout(function(){
 		document.getElementById("room-id-display").innerHTML = window.room_id;
-		let node = document.createElement("LI");
-		console.log(players);                 
+	}, 100);
+});
+
+socket.on('room-update', function(players) {
+	console.log(players);
+	var players = JSON.parse(players);
+	setTimeout(function(){
+		document.getElementById("player-list").innerHTML = "";                
 		for(let i = 0; i<players.length; i++){
-			let node = document.createElement("LI");                 
+			let node = document.createElement("LI");
+			if(players[i] == null || players[i] == undefined)
+				continue;                 
 			let textnode = document.createTextNode(players[i]['id']+" "+players[i]['name']);       
 			node.appendChild(textnode);                              
 			document.getElementById("player-list").appendChild(node);	
 		}
-	}, 1000);
+	},100);
 });
 
 function joinGame(){
@@ -58,4 +63,8 @@ function fetchlobby(owner){
 				document.getElementById("owner-privileges").style.visibility = "hidden";
 			}
 		});
+}
+
+function startGame(){
+	socket.emit('start-game');
 }

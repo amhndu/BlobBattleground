@@ -19,6 +19,11 @@ class GameRoom:
         self.players.append(p)
         return p
 
+    def remove_player(self, p_id):
+        p = None
+        if p_id >= 0 and p_id < len(self.players):
+            self.players[p_id] = None
+        return p_id
 
     def generate_room_id(self):
         room_id = ''.join(random.SystemRandom().choice(
