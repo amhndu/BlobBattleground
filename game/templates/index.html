@@ -3,15 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <title>Welcome to BlobBattleground!</title>
+  <style>
+    .hidden { display: none; };
+  </style>
 </head>
 <body>
   <div id="app">
   	<p>Welcome to BlobBattleground!</p>
-  	<button onclick="createGame()">Create Game</button>
-  	<input type="text" id="room_id">
-  	<button onclick="joinGame()">Join Game</button>
+    <input type="text" id="username" placeholder="Name"/><br/>
+  	<button onclick="lobby.create()">Create Game</button>
+  	<input type="text" id="room_id" placeholder="Room Id">
+  	<button onclick="lobby.join()">Join Game</button>
   	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-  	<script type="text/javascript" src="{{ url_for('static', filename='js/client.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/client.js') }}"
+        gamesrc="{{ url_for('static', filename='js/game.js') }}"
+        libsrc="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.min.js"></script>
   </div>
 </body>
 </html>

@@ -1,14 +1,21 @@
 from game.player import Player
 import random
 import string
+from enum import Enum, auto
 
 rooms = {} # dict to track active rooms
 
 class GameRoom:
+    class State(Enum):
+        Lobby       = auto()
+        Playing     = auto()
+        Finished    = auto()
+
     def __init__(self):
         self.id = self.generate_room_id()
         self.players = []
         self.owner = None
+        self.state = GameRoom.State.Lobby
 
     def new_player(self, *args):
         p = None
@@ -20,7 +27,6 @@ class GameRoom:
         return p
 
     def remove_player(self, p_id):
-        p = None
         if p_id >= 0 and p_id < len(self.players):
             self.players[p_id] = None
         return p_id
