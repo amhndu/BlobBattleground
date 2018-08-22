@@ -1,48 +1,56 @@
 var config = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    parent: document.body,
+    renderer: Phaser.AUTO,
+    width: 1020,
+    height: 728,
     physics: {
         default: 'arcade',
         arcade: {
             gravity: { y: 200 }
         }
     },
-    scene: {
+    state: {
         preload: preload,
-        create: create
+        create: create,
+        update: update
     }
 };
 
 var game = new Phaser.Game(config);
 
-function preload ()
-{
-    this.load.setBaseURL('http://labs.phaser.io');
+class Player {
 
-    this.load.image('sky', 'assets/skies/space3.png');
-    this.load.image('logo', 'assets/sprites/phaser3-logo.png');
-    this.load.image('red', 'assets/particles/red.png');
 }
 
-function create ()
-{
-    this.add.image(400, 300, 'sky');
+function preload(){
+}
 
-    var particles = this.add.particles('red');
+let player;
+let cursors;
+function create() {
+    game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    var emitter = particles.createEmitter({
-        speed: 100,
-        scale: { start: 1, end: 0 },
-        blendMode: 'ADD'
-    });
+    player = this.add.graphics(game.world.centerX, game.world.centerY);
+    player.beginFill(0xFF4370, 1);
+    player.drawCircle(0, 0, 60);
 
-    var logo = this.physics.add.image(400, 100, 'logo');
+    game.physics.enable(player, Phaser.Physics.ARCADE);
 
-    logo.setVelocity(100, 200);
-    logo.setBounce(1, 1);
-    logo.setCollideWorldBounds(true);
+    player.body.drag.set(200);
+    player.body.maxVelocity.set(200);
 
-    emitter.startFollow(logo);
+    cursors = game.input.keyboard.createCursorKeys();
+}
+
+function update() {
+    const delta_map = { left: { x: -1, y: 0 }, right: { x: 1, y: 0}, up: { x: 0, y: -1 }, down: { x: 0, y: 1}};
+    const delta = { x: 0, y: 0 };
+    for (dir in cursors) {
+        if (cursors[dir].isDown) {
+            delta.x += delta_map[dir].x;
+            delta.y += delta_map[dir].y;
+        }
+    }
+    
+    player.body.velocity.x += delta.x * 100;
+    player.body.velocity.y += delta.y * 100;
 }
