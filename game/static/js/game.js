@@ -28,10 +28,10 @@ class KeyboardController {
     }
 
     stateSnapshot() {
-        state = {
+        let state = {
             id: this.player.id,
-            pos_x: this.player.view.body.x,
-            pos_y: this.player.view.body.y
+            posx: this.player.view.body.x,
+            posy: this.player.view.body.y
         };
         return state;
     }
@@ -43,15 +43,19 @@ class NetworkController {
     }
 
     addPlayer(player) {
-        this.players[player.id] = player
+        this.players[player.id] = player;
     }
 
     networkUpdate(players) {
         console.log('Network Update');
         console.log(players);
-        //players.forEach((item, index, arr) => {
-            
-        //});
+        for(let i = 0; i<players.length; i++){
+            if(players[i].id == lobby.self_id)
+                continue;
+            let view = this.players[players[i].id];
+            view.body.x = players[i].posx;
+            view.body.y = players[i].posy;
+        }
     }
 }
 
@@ -59,14 +63,17 @@ let keyboardController = null;
 let networkController = null;
 
 class PlayState {
+    constructor(initialPStates){
+        this.initialPStates = initialPStates;
+    }
     preload() {
         // load images and stuff here
     }
 
-    createPlayerView(physics) {
+    createPlayerView(physics, initial_pos={x:0,y:0}) {
         let playerView = this.game.add.graphics(this.game.world.centerX, this.game.world.centerY);
         playerView.beginFill(0xFF4370, 1);
-        playerView.drawCircle(0, 0, 60);
+        playerView.drawCircle(initial_pos.x, initial_pos.y, 60);
 
         if (physics) {
             this.game.physics.enable(playerView, Phaser.Physics.ARCADE);
@@ -79,16 +86,24 @@ class PlayState {
 
     create() {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
-
-        let player = new Player(lobby.self_id, this.createPlayerView(true));
-        let cursors = this.game.input.keyboard.createCursorKeys();
-        keyboardController = new KeyboardController(player, cursors);
-
         networkController = new NetworkController();
+        for(let i = 0; i<this.initialPStates.length; i++){
+            if(this.initialPStates[i].id == lobby.self_id){
+                let self_pos = {x:this.initialPStates[i].posx, y:this.initialPStates[i].posy};
+                let player = new Player(lobby.self_id, this.createPlayerView(true, self_pos));
+                let cursors = this.game.input.keyboard.createCursorKeys();
+                keyboardController = new KeyboardController(player, cursors);
+            }
+            else {
+                let pos = {x: this.initialPStates[i].posx, y: this.initialPStates[i].posy};
+                let player = new Player(this.initialPStates[i].id, this.createPlayerView(true, pos));
+                networkController.addPlayer(player);
+            }
+        }
         lobby.socket.on('game-update', (players) => {
-            var data = JSON.parse(players);
+            players = JSON.parse(players);
             networkController.networkUpdate(players);
-            //lobby.socket.emit('client-update', keyboardController.stateSnapshot());
+            lobby.socket.emit('client-update', JSON.stringify(keyboardController.stateSnapshot()));
         });
     }
 
@@ -99,7 +114,7 @@ class PlayState {
 
 function gameSetup(players) {
     console.log(players);
-    //var player = JSON.parse(players);
+    players = JSON.parse(players);
 
     const config = {
         renderer: Phaser.AUTO,
@@ -111,7 +126,7 @@ function gameSetup(players) {
                 gravity: { y: 200 }
             }
         },
-        state: new PlayState()
+        state: new PlayState(players)
     };
 
     let game = new Phaser.Game(config);

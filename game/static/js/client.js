@@ -74,8 +74,8 @@ function main() {
             })
             .then(function(){
                 socket.on('lobby-update', (players) => {
+                    players = JSON.parse(players);
                     console.log(players);
-                    var players = JSON.parse(players);
                     document.getElementById("player-list").innerHTML = "";                
                     for(let i = 0; i<players.length; i++){
                         let node = document.createElement("LI");
@@ -91,29 +91,30 @@ function main() {
 
     socket.on('lobby-joined', (player_id, players) => {
         lobby.self_id = player_id;
+        players = JSON.parse(players);
         console.log(players);
         console.log(player_id);
         fetchlobby(false)
             .then(function(){
                 document.getElementById("room-id-display").innerHTML = lobby.room_id;
-                document.getElementById("player-list").innerHTML = "";                
+                document.getElementById("player-list").innerHTML = "";               
                 for(let i = 0; i<players.length; i++){
                     let node = document.createElement("LI");
-                    if(players[i] == null || players[i] == undefined)
+                    if(players[i] == null)
                         continue;                 
-                    let textnode = document.createTextNode(players[i]['id']+" "+players[i]['name']);       
-                    node.appendChild(textnode);                              
+                    let textnode = document.createTextNode(players[i]['id']+" "+players[i]['name']);
+                    node.appendChild(textnode);                                    
                     document.getElementById("player-list").appendChild(node);   
                 }
             })
             .then(function(){
                 socket.on('lobby-update', (players) => {
+                    players = JSON.parse(players);
                     console.log(players);
-                    var players = JSON.parse(players);
                     document.getElementById("player-list").innerHTML = "";                
                     for(let i = 0; i<players.length; i++){
                         let node = document.createElement("LI");
-                        if(players[i] == null || players[i] == undefined)
+                        if(players[i] == null)
                             continue;                 
                         let textnode = document.createTextNode(players[i]['id']+" "+players[i]['name']);       
                         node.appendChild(textnode);                              

@@ -16,8 +16,8 @@ class GameRoom:
         self.players = []
         self.owner = None
         self.state = GameRoom.State.Lobby
-        self.dimension_x = 1000
-        self.dimension_y = 1000
+        self.dimension_x = 300
+        self.dimension_y = 300
 
     def new_player(self, *args):
         p = None
@@ -33,6 +33,11 @@ class GameRoom:
             self.players[p_id] = None
         return p_id
 
+    def update_player(self, p_id, posx, posy):
+        if p_id >= 0 and p_id < len(self.players):
+            self.players[p_id].posx = posx
+            self.players[p_id].posy = posy 
+
     def generate_room_id(self):
         room_id = ''.join(random.SystemRandom().choice(
             string.ascii_uppercase) for _ in range(5))
@@ -46,4 +51,3 @@ class GameRoom:
             if player is not None:
                 player.posx = random.randrange(0, self.dimension_x)
                 player.posy = random.randrange(0, self.dimension_y)
-        print('spawned players')

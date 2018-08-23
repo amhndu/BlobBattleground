@@ -51,6 +51,13 @@ def start():
     else:
         current_app.logger.info('Attempt to start game %s by non-owner or a game not in Lobby state', room.id)
 
+@socketio.on('client-update')
+def on_client_update(json_data):
+    room_id, player_id = sid_map[request.sid]
+    room = rooms[room_id]
+    room.update_player(player_id, json.loads(json_data)['posx'], json.loads(json_data)['posy'])
+    current_app.logger.debug('Client update from player %s %s', player_id, room.id)
+
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -60,6 +67,3 @@ def on_disconnect():
     leave_room(room.id)
     current_app.logger.info('Player %s left room %s', room.players[p_id].name, room.id)
     emit('lobby-update', ut.serialize_player(room.players, ['id','name']), room=room.id) 
-
-
-
