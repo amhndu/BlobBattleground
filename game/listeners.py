@@ -24,6 +24,9 @@ def create(name):
 @socketio.on('join-lobby')
 def join(room_id, name):
     room = rooms[room_id]
+    if room.state != GameRoom.State.Lobby:
+        current_app.logger.info('Attempt to join room not in lobby state')
+
     join_room(room.id)
 
     player = room.new_player(name)

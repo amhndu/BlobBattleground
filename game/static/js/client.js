@@ -2,36 +2,25 @@ class Lobby {
     constructor() {
         this.socket = io('http://' + document.domain + ':' + location.port);
         this.room_id = null
+        this.self_id = null
+        this.self_name = null
     }
 
     join(){
         this.room_id = document.getElementById('room_id').value;
-        this.player = new PlayerModel(null, document.getElementById('username').value || 'Anonymous')
-        this.socket.emit('join-lobby', room, this.player.name);
+        this.self_name = document.getElementById('username').value || 'Anonymous';
+        this.socket.emit('join-lobby', this.room_id, this.self_name);
         console.log('sent join lobby');
     }
 
     create(){
-        this.player = new PlayerModel(null, document.getElementById('username').value || 'Anonymous')
-        this.socket.emit('create-lobby', this.player.name);
+        this.self_name = document.getElementById('username').value || 'Anonymous';
+        this.socket.emit('create-lobby', this.self_name);
         console.log('sent create lobby');
     }
 
     startGame(){
         this.socket.emit('start-game');
-    }
-
-    receiveUpdate(data){
-        console.log('game update');
-        console.log(data);
-    }
-
-}
-
-class PlayerModel {
-    constructor(id, name) {
-        this.id = id
-        this.name = name
     }
 }
 
@@ -71,18 +60,19 @@ function main() {
     socket.on('lobby-created', (room_id, player_id) => {
         console.log(room_id);
         console.log(player_id);
+        lobby.self_id = player_id;
         fetchlobby(true)
             .then(function(){
                 document.getElementById("room-id-display").innerHTML = room_id;
                 let node = document.createElement("LI");                 
-                let textnode = document.createTextNode(player_id+" "+lobby.player.name);       
+                let textnode = document.createTextNode(lobby.self_id+" "+lobby.self_name);       
                 node.appendChild(textnode);                              
                 document.getElementById("player-list").appendChild(node);
             });
     });
 
     socket.on('lobby-joined', (player_id) => {
-        window.player_id = player_id;
+        lobby.self_id = player_id;
         fetchlobby(false)
             .then(function(){
                 document.getElementById("room-id-display").innerHTML = lobby.room_id;
@@ -90,8 +80,8 @@ function main() {
     });
 
     socket.on('room-update', (players) => {
-        console.log(players);
         var players = JSON.parse(players);
+        console.log(players);
         document.getElementById("player-list").innerHTML = "";                
         for(let i = 0; i<players.length; i++){
             let node = document.createElement("LI");
@@ -104,16 +94,12 @@ function main() {
     });
 
 
-
     socket.on('game-started', () => {
         console.log('Initiate game start. Loading scripts...');
         document.getElementById('app').classList.add('hidden');
         loadScript(libsrc)
             .then(() => loadScript(gamesrc));
     });
-
-    socket.on('lobby-update', lobby.receiveUpdate);
-
 
 }
 
