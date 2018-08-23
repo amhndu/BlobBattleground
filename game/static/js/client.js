@@ -7,7 +7,7 @@ class Lobby {
     join(){
         this.room_id = document.getElementById('room_id').value;
         this.player = new PlayerModel(null, document.getElementById('username').value || 'Anonymous')
-        this.socket.emit('join-lobby', room, this.player.name);
+        this.socket.emit('join-lobby', this.room_id, this.player.name);
         console.log('sent join lobby');
     }
 
@@ -29,9 +29,11 @@ class Lobby {
 }
 
 class PlayerModel {
-    constructor(id, name) {
+    constructor(id, name, posx=null, posy=null) {
         this.id = id
         this.name = name
+        this.posx = posx
+        this.posy = posy
     }
 }
 
@@ -55,9 +57,10 @@ function loadScript(src) {
     console.log('Loading ' + src);
     return new Promise((resolve, reject) => {
         let newScript = document.createElement("script");
+        newScript.type = "application/javascript";
         newScript.src = src;
         newScript.onload = () => resolve();
-        document.head.appendChild(newScript);
+        document.body.appendChild(newScript);
     });
 }
 
@@ -78,42 +81,71 @@ function main() {
                 let textnode = document.createTextNode(player_id+" "+lobby.player.name);       
                 node.appendChild(textnode);                              
                 document.getElementById("player-list").appendChild(node);
+            })
+            .then(function(){
+                socket.on('lobby-update', (players) => {
+                    console.log(players);
+                    var players = JSON.parse(players);
+                    document.getElementById("player-list").innerHTML = "";                
+                    for(let i = 0; i<players.length; i++){
+                        let node = document.createElement("LI");
+                        if(players[i] == null || players[i] == undefined)
+                            continue;                 
+                        let textnode = document.createTextNode(players[i]['id']+" "+players[i]['name']);       
+                        node.appendChild(textnode);                              
+                        document.getElementById("player-list").appendChild(node);   
+                    }
+                })   
             });
     });
 
-    socket.on('lobby-joined', (player_id) => {
+    socket.on('lobby-joined', (player_id, players) => {
         window.player_id = player_id;
+        console.log(players);
+        console.log(player_id);
         fetchlobby(false)
             .then(function(){
                 document.getElementById("room-id-display").innerHTML = lobby.room_id;
+                document.getElementById("player-list").innerHTML = "";                
+                for(let i = 0; i<players.length; i++){
+                    let node = document.createElement("LI");
+                    if(players[i] == null || players[i] == undefined)
+                        continue;                 
+                    let textnode = document.createTextNode(players[i]['id']+" "+players[i]['name']);       
+                    node.appendChild(textnode);                              
+                    document.getElementById("player-list").appendChild(node);   
+                }
+            })
+            .then(function(){
+                socket.on('lobby-update', (players) => {
+                    console.log(players);
+                    var players = JSON.parse(players);
+                    document.getElementById("player-list").innerHTML = "";                
+                    for(let i = 0; i<players.length; i++){
+                        let node = document.createElement("LI");
+                        if(players[i] == null || players[i] == undefined)
+                            continue;                 
+                        let textnode = document.createTextNode(players[i]['id']+" "+players[i]['name']);       
+                        node.appendChild(textnode);                              
+                        document.getElementById("player-list").appendChild(node);   
+                    }
+                })
             });
     });
 
-    socket.on('room-update', (players) => {
-        console.log(players);
-        var players = JSON.parse(players);
-        document.getElementById("player-list").innerHTML = "";                
-        for(let i = 0; i<players.length; i++){
-            let node = document.createElement("LI");
-            if(players[i] == null || players[i] == undefined)
-                continue;                 
-            let textnode = document.createTextNode(players[i]['id']+" "+players[i]['name']);       
-            node.appendChild(textnode);                              
-            document.getElementById("player-list").appendChild(node);	
-        }
-    });
 
-
-
-    socket.on('game-started', () => {
+    socket.on('game-started', (players) => {
         console.log('Initiate game start. Loading scripts...');
+        console.log('Initial Player positions:');
+        console.log(players);
+        Players = []
+        for(let i = 0; i < players.length; i++){
+            Players.push(new PlayerModel(players[i].id, players[i].name, players[i].posx, players[i].posy));
+        }
         document.getElementById('app').classList.add('hidden');
         loadScript(libsrc)
             .then(() => loadScript(gamesrc));
     });
-
-    socket.on('lobby-update', lobby.receiveUpdate);
-
 
 }
 

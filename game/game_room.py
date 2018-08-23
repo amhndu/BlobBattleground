@@ -16,6 +16,8 @@ class GameRoom:
         self.players = []
         self.owner = None
         self.state = GameRoom.State.Lobby
+        self.dimension_x = 1000
+        self.dimension_y = 1000
 
     def new_player(self, *args):
         p = None
@@ -38,3 +40,10 @@ class GameRoom:
             self.generate_room_id()
         else:
             return room_id
+
+    def spawn_players(self):
+        for player in self.players:
+            if player is not None:
+                player.posx = random.randrange(0, self.dimension_x)
+                player.posy = random.randrange(0, self.dimension_y)
+        print('spawned players')

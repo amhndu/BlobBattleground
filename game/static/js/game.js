@@ -17,10 +17,6 @@ var config = {
 
 var game = new Phaser.Game(config);
 
-class Player {
-
-}
-
 function preload(){
 }
 
@@ -54,3 +50,7 @@ function update() {
     player.body.velocity.x += delta.x * 100;
     player.body.velocity.y += delta.y * 100;
 }
+
+lobby.socket.on('game-update', (players) =>{
+    console.log(players);
+});
