@@ -1,9 +1,9 @@
 class Lobby {
     constructor() {
         this.socket = io('http://' + document.domain + ':' + location.port);
-        this.room_id = null
-        this.self_id = null
-        this.self_name = null
+        this.room_id = null;
+        this.self_id = null;
+        this.self_name = null;
     }
 
     join() {
