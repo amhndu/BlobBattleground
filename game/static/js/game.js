@@ -52,7 +52,7 @@ class NetworkController {
         for(let i = 0; i<players.length; i++){
             if(players[i].id == lobby.self_id)
                 continue;
-            let view = this.players[players[i].id];
+            let view = this.players[players[i].id].view;
             view.body.x = players[i].posx;
             view.body.y = players[i].posy;
         }
