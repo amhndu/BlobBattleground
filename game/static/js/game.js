@@ -31,7 +31,9 @@ class KeyboardController {
         let state = {
             id: this.player.id,
             posx: this.player.view.body.x,
-            posy: this.player.view.body.y
+            posy: this.player.view.body.y,
+            velx: this.player.view.body.velocity.x,
+            vely: this.player.view.body.velocity.y,
         };
         return state;
     }
@@ -51,19 +53,25 @@ class NetworkController {
         console.log(playerUpdate);
 
         for(let i = 0; i<playerUpdate.length; i++){
+            if(playerUpdate[i] == null) {
+                continue;
+                // player.hide()
+            }
+
             if(playerUpdate[i].id == lobby.self_id)
                 continue;
 
             let player = this.players[playerUpdate[i].id];
             player.view.position.x = playerUpdate[i].posx;
             player.view.position.y = playerUpdate[i].posy;
+            player.view.body.velocity.x = playerUpdate[i].velx;
+            player.view.body.velocity.y = playerUpdate[i].vely;
         }
     }
 }
 
 let keyboardController = null;
 let networkController = null;
-let views = {};
 
 class PlayState {
     constructor(initialPStates){
@@ -88,12 +96,12 @@ class PlayState {
     }
 
     create() {
+        this.game.stage.disableVisibilityChange = true;
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         networkController = new NetworkController();
         for (let i = 0; i<this.initialPStates.length; i++) {
             let pos = {x: this.initialPStates[i].posx, y: this.initialPStates[i].posy};
             let player = new Player(this.initialPStates[i].id, this.createPlayerView(true, pos));
-            views[player.id] = player.view;
 
             if (this.initialPStates[i].id == lobby.self_id) {
                 let cursors = this.game.input.keyboard.createCursorKeys();
@@ -132,6 +140,5 @@ function gameSetup(players) {
     };
 
     let game = new Phaser.Game(config);
-    game.stage.disableVisibilityChange = true;
     console.log('Created Phaser game');
 }
