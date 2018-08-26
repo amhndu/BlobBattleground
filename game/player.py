@@ -4,3 +4,5 @@ class Player:
         self.name = name
         self.posx = None
         self.posy = None
+        self.velx = 0
+        self.vely = 0

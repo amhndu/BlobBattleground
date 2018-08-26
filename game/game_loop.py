@@ -5,12 +5,11 @@ from game import socketio
 import json
 from game import utilities as ut
 
-def game_loop(game_room, current_app):
+def game_loop(game_room):
     app.logger.debug("%s's game loop started", game_room.id)
-    with current_app.app_context():
-	    while game_room.state != GameRoom.State.Finished:
-	        socketio.emit('game-update', ut.serialize_player(game_room.players, ['id','posx','posy']), room=game_room.id)
-	        app.logger.debug('update sent to %s', game_room.id)
-	        socketio.sleep(4) # 0
+    while game_room.state == GameRoom.State.Playing:
+        socketio.emit('game-update', ut.serialize_player(game_room.players, ['id','posx','posy', 'velx', 'vely']), room=game_room.id)
+        #app.logger.debug('update sent to %s', game_room.id)
+        socketio.sleep(0.1) # 0
     app.logger.debug("%s's game loop ended", game_room.id)
 

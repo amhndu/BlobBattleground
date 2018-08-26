@@ -33,10 +33,12 @@ class GameRoom:
             self.players[p_id] = None
         return p_id
 
-    def update_player(self, p_id, posx, posy):
-        if p_id >= 0 and p_id < len(self.players):
-            self.players[p_id].posx = posx
-            self.players[p_id].posy = posy 
+    def update_player(self, p_id, data):
+        if p_id not in range(len(self.players)):
+            return
+
+        for attr in ('posx', 'posy', 'velx', 'vely'):
+            setattr(self.players[p_id], attr, data[attr])
 
     def generate_room_id(self):
         room_id = ''.join(random.SystemRandom().choice(
