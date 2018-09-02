@@ -10,6 +10,6 @@ def game_loop(game_room):
     while game_room.state == GameRoom.State.Playing:
         socketio.emit('game-update', ut.serialize_player(game_room.players, ['id','posx','posy', 'velx', 'vely']), room=game_room.id)
         #app.logger.debug('update sent to %s', game_room.id)
-        socketio.sleep(0.1) # 0
+        socketio.sleep(0.05) # 0
     app.logger.debug("%s's game loop ended", game_room.id)
 
