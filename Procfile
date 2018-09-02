@@ -1,1 +1,1 @@
-web: gunicorn game:app
+web: gunicorn -k eventlet game:app
